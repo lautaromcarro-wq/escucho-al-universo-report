@@ -1,0 +1,22 @@
+# Datos sensibles de cliente — NUNCA pushear
+*.csv
+clientes-*.csv
+ventas-*.csv
+tiendanube-*.csv
+Informe*.csv
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local
+node_modules/
+.env
+.env.local
+.vercel/
+
+# Backups
+*.bak
+reporte-escucho-al-universo.html

@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Escucho al Universo · Diagnóstico Paid Media & Retención · Nebulab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  /* Cosmic / esoteric palette — placeholder brandeado para Escucho al Universo */
+  --bg:#0f0a1a; --bg-deep:#07040d; --surface:#17102a; --surface2:#1e1633; --surface3:#271c42;
+  --border:#2d2245; --border-hi:#3d2f5a;
+  --accent:#d4b483; --accent-dim:rgba(212,180,131,.12); --accent-glow:rgba(212,180,131,.25);
+  --accent2:#b695d4; --accent2-dim:rgba(182,149,212,.12);
+  --verde:#7fb069; --naranja:#e8a87c; --rojo:#c97b7b;
+  --text:#f0ead6; --text-dim:#9d8cb5; --text-muted:#4a3d5e;
+  --c1:#d4b483; --c2:#b695d4; --c3:#7fb069; --c4:#e8a87c; --c5:#8ec5d4; --c6:#c97b7b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
+.tnum{font-variant-numeric:tabular-nums;font-feature-settings:'tnum';letter-spacing:-.01em}
+body{overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:
+  radial-gradient(900px 700px at 10% -10%, rgba(212,180,131,.06), transparent 60%),
+  radial-gradient(1000px 800px at 110% 110%, rgba(182,149,212,.08), transparent 60%),
+  radial-gradient(1400px 900px at 50% 40%, rgba(142,197,212,.03), transparent 70%);
+  pointer-events:none}
+a{color:var(--accent2);text-decoration:none}
+button{font-family:inherit;color:inherit;cursor:pointer}
+
+/* Header */
+.header{position:sticky;top:0;z-index:100;height:68px;display:flex;align-items:center;padding:0 32px;
+  background:rgba(15,10,26,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:12px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:20px;letter-spacing:-.005em}
+.brand .logo{width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #f3dfb3 0%, var(--accent) 45%, #8b6d3d 100%);display:flex;align-items:center;justify-content:center;color:#0f0a1a;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:18px;box-shadow:0 0 20px rgba(212,180,131,.35)}
+.brand .sep{color:var(--text-muted);font-weight:400;margin:0 6px;font-size:16px}
+.brand .ag{color:var(--text-dim);font-weight:500;font-size:13px;font-family:'Inter',sans-serif;letter-spacing:.08em;text-transform:uppercase}
+.header .meta{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.12em;font-weight:500;font-variant-numeric:tabular-nums}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--verde);box-shadow:0 0 12px var(--verde);animation:pulse 2.2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* Tabs */
+.tabs{position:sticky;top:68px;z-index:99;display:flex;gap:4px;padding:0 32px;background:rgba(15,10,26,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);overflow-x:auto}
+.tab-btn{padding:14px 18px;font-family:'Inter';font-size:13px;font-weight:500;color:var(--text-dim);background:transparent;border:none;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--text);border-bottom-color:var(--accent)}
+
+/* Container */
+.content{padding:48px 48px 80px;max-width:1600px;margin:0 auto}
+.tab-panel{display:none}
+.tab-panel.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* Hero */
+.hero{margin-bottom:40px}
+.hero.boxed{padding:36px;background:linear-gradient(135deg,rgba(182,149,212,.10),rgba(212,180,131,.06));border:1px solid var(--border);border-radius:14px}
+.eyebrow{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.22em;margin-bottom:18px;font-weight:500}
+.hero h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:52px;letter-spacing:-.01em;line-height:1.04;margin-bottom:14px;font-variant-numeric:tabular-nums}
+.hero h1 .accent{color:var(--accent);font-style:italic;font-weight:500}
+.hero h1 .accent2{color:var(--accent2);font-style:italic;font-weight:500}
+.hero .sub{color:var(--text-dim);font-size:15px;margin-bottom:22px;max-width:780px;line-height:1.6}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:5px 12px;border-radius:999px;font-family:'Inter';font-size:11px;font-weight:500;background:var(--surface2);border:1px solid var(--border);color:var(--text-dim)}
+.chip.verde{background:rgba(127,176,105,.08);border-color:rgba(127,176,105,.3);color:var(--verde)}
+.chip.naranja{background:rgba(232,168,124,.08);border-color:rgba(232,168,124,.3);color:var(--naranja)}
+.chip.rojo{background:rgba(201,123,123,.08);border-color:rgba(201,123,123,.3);color:var(--rojo)}
+.chip.dorado{background:var(--accent-dim);border-color:rgba(212,180,131,.3);color:var(--accent)}
+.chip.amatista{background:var(--accent2-dim);border-color:rgba(182,149,212,.3);color:var(--accent2)}
+
+/* Section */
+.section{margin-top:40px}
+.section-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px;gap:20px;flex-wrap:wrap}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;letter-spacing:-.005em}
+.section-sub{color:var(--text-dim);font-size:13px;margin-top:4px;max-width:720px;line-height:1.55}
+.section-link{color:var(--accent);font-size:12px;font-family:'Inter';text-transform:uppercase;letter-spacing:.1em}
+.section-link:hover{text-decoration:underline}
+
+/* Card */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;transition:all .25s}
+.card:hover{border-color:var(--border-hi);box-shadow:0 4px 24px rgba(182,149,212,.08)}
+
+/* KPI grid */
+.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
+.kpi-grid.four{grid-template-columns:repeat(4,1fr)}
+.kpi{position:relative;overflow:hidden}
+.kpi::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);opacity:0;transition:opacity .3s}
+.kpi:hover::after{opacity:1}
+.kpi .label{font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--text-dim);margin-bottom:14px;font-weight:500}
+.kpi .value{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:36px;line-height:1.05;letter-spacing:-.01em;color:var(--text);margin-bottom:8px;font-variant-numeric:tabular-nums}
+.kpi .delta{font-size:12px;color:var(--text-dim);font-variant-numeric:tabular-nums}
+.kpi .delta.verde{color:var(--verde)}
+.kpi .delta.rojo{color:var(--rojo)}
+.kpi .delta.naranja{color:var(--naranja)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+
+/* Table */
+.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:14px 16px;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);border-bottom:1px solid var(--border);background:var(--surface2);white-space:nowrap;user-select:none}
+th.sortable{cursor:pointer}
+th.sortable:hover{color:var(--text)}
+th .ind{display:inline-block;width:10px;color:var(--accent);font-size:10px;margin-left:4px}
+td{padding:13px 16px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:var(--surface2)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:500;letter-spacing:-.01em;color:var(--text)}
+.bold{font-weight:600;letter-spacing:-.005em}
+
+/* Badges */
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.005em}
+.badge.verde{background:rgba(127,176,105,.15);color:var(--verde)}
+.badge.dorado{background:var(--accent-dim);color:var(--accent)}
+.badge.amatista{background:var(--accent2-dim);color:var(--accent2)}
+.badge.rojo{background:rgba(201,123,123,.15);color:var(--rojo)}
+.badge.naranja{background:rgba(232,168,124,.15);color:var(--naranja)}
+.badge.gris{background:var(--surface3);color:var(--text-dim)}
+
+/* Mini bar */
+.minibar{display:flex;align-items:center;gap:8px}
+.minibar .track{flex:1;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;min-width:60px;max-width:120px}
+.minibar .fill{height:100%;background:var(--accent);border-radius:2px}
+.minibar .pct{font-family:'Inter';font-size:12px;color:var(--text-dim);min-width:40px;text-align:right}
+
+/* Chart */
+.chart-card{padding:26px}
+.chart-card h3{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19px;margin-bottom:4px;letter-spacing:-.005em}
+.chart-card .sub{font-size:12px;color:var(--text-dim);margin-bottom:20px}
+.chart-box{height:300px;position:relative}
+.chart-box.tall{height:420px}
+
+/* Filters */
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+.filters input[type="text"], .filters select{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-family:'Inter';font-size:13px;outline:none;transition:border-color .15s}
+.filters input[type="text"]{min-width:220px}
+.filters input:focus, .filters select:focus{border-color:var(--accent)}
+.filters .count{margin-left:auto;font-family:'Inter';font-size:12px;color:var(--text-dim)}
+.filters .count strong{color:var(--text)}
+
+/* Alert block (destacada) */
+.alert-block{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
+.alert-big{padding:26px;border-radius:14px;border:1px solid var(--border);position:relative;overflow:hidden}
+.alert-big.rojo{background:linear-gradient(135deg,rgba(201,123,123,.10),rgba(201,123,123,.02));border-color:rgba(201,123,123,.35)}
+.alert-big.naranja{background:linear-gradient(135deg,rgba(232,168,124,.10),rgba(232,168,124,.02));border-color:rgba(232,168,124,.35)}
+.alert-big .tag{display:inline-block;padding:4px 10px;border-radius:999px;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
+.alert-big.rojo .tag{background:rgba(201,123,123,.2);color:var(--rojo)}
+.alert-big.naranja .tag{background:rgba(232,168,124,.2);color:var(--naranja)}
+.alert-big h3{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;margin-bottom:10px;letter-spacing:-.005em;line-height:1.2}
+.alert-big h3 .big-num{color:var(--text);font-weight:700}
+.alert-big.rojo h3 .big-num{color:var(--rojo)}
+.alert-big.naranja h3 .big-num{color:var(--naranja)}
+.alert-big p{color:var(--text-dim);font-size:13px;line-height:1.6;margin-bottom:14px}
+.alert-big p strong{color:var(--text);font-weight:500}
+.alert-big .impacto{padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--text-dim)}
+.alert-big .impacto strong{color:var(--accent);font-weight:500}
+
+/* Insight card (Libercam style) */
+.insight{padding:22px;border-left:3px solid var(--border-hi)}
+.insight.i-tendencia{border-left-color:var(--accent2)}
+.insight.i-oportunidad{border-left-color:var(--accent)}
+.insight.i-alerta{border-left-color:var(--rojo)}
+.insight.i-alerta-naranja{border-left-color:var(--naranja)}
+.insight.i-patron{border-left-color:var(--verde)}
+.insight .head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.insight .icon{font-size:22px}
+.insight h4{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:18px;margin:6px 0 10px;line-height:1.3;letter-spacing:-.005em}
+.insight p{font-size:13px;color:var(--text-dim);line-height:1.6}
+.insight p strong{color:var(--text);font-weight:500}
+
+/* Oportunidad card */
+.opp{padding:22px;position:relative;overflow:hidden}
+.opp .rank{position:absolute;top:18px;right:20px;font-family:'Cormorant Garamond',serif;font-size:42px;color:var(--surface3);font-weight:700;line-height:1}
+.opp .prio-tag{display:inline-block;padding:4px 10px;border-radius:999px;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
+.opp .prio-tag.p1{background:rgba(212,180,131,.18);color:var(--accent)}
+.opp .prio-tag.p2{background:rgba(182,149,212,.18);color:var(--accent2)}
+.opp .prio-tag.p3{background:rgba(127,176,105,.18);color:var(--verde)}
+.opp h4{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:20px;margin-bottom:10px;letter-spacing:-.005em;line-height:1.25}
+.opp .desc{color:var(--text-dim);font-size:13px;line-height:1.6;margin-bottom:14px}
+.opp .desc strong{color:var(--text);font-weight:500}
+.opp .metric-row{display:flex;gap:20px;padding-top:14px;border-top:1px solid var(--border);flex-wrap:wrap}
+.opp .metric-row > div{flex:1;min-width:100px}
+.opp .metric-row .m-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);margin-bottom:4px;font-weight:500}
+.opp .metric-row .m-val{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums}
+
+/* Action / plan card */
+.action{padding:22px;margin-bottom:12px;display:flex;gap:18px;align-items:flex-start}
+.action .prio{flex-shrink:0;padding:5px 10px;border-radius:6px;font-family:'Inter';font-size:10px;font-weight:600;letter-spacing:.08em;white-space:nowrap;height:fit-content;text-transform:uppercase}
+.prio.alta{background:rgba(201,123,123,.18);color:var(--rojo)}
+.prio.media{background:rgba(212,180,131,.15);color:var(--accent)}
+.prio.baja{background:rgba(127,176,105,.15);color:var(--verde)}
+.action .body{flex:1}
+.action h4{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:18px;margin-bottom:8px;letter-spacing:-.005em}
+.action .desc{font-size:13px;color:var(--text-dim);margin-bottom:8px;line-height:1.6}
+.action .desc strong{color:var(--text);font-weight:500}
+.action .impacto{font-size:12px;color:var(--text-dim);font-style:italic}
+.action .impacto strong{color:var(--accent);font-style:normal;font-weight:500}
+.action .status{margin-left:auto;flex-shrink:0;padding:7px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'Inter';font-size:11px;color:var(--text-dim);transition:all .15s;text-transform:uppercase;letter-spacing:.08em;font-weight:500}
+.action .status:hover{border-color:var(--border-hi);color:var(--text)}
+.action.done .status{background:rgba(127,176,105,.12);border-color:rgba(127,176,105,.3);color:var(--verde)}
+.action.done h4{text-decoration:line-through;opacity:.55}
+
+/* Segment retention card */
+.segcard{padding:20px;text-align:center}
+.segcard .s-count{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:44px;color:var(--accent);line-height:1;margin-bottom:6px}
+.segcard .s-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;margin-bottom:8px}
+.segcard .s-desc{font-size:12px;color:var(--text-dim);line-height:1.5;margin-bottom:12px;min-height:54px}
+.segcard .s-prio{display:inline-block;padding:3px 10px;border-radius:999px;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+
+/* CTA footer */
+.cta{margin-top:60px;padding:48px;border-radius:16px;background:linear-gradient(135deg,rgba(182,149,212,.1),rgba(212,180,131,.08));border:1px solid var(--border);text-align:center}
+.cta h2{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:38px;letter-spacing:-.01em;margin-bottom:14px;line-height:1.15}
+.cta h2 em{color:var(--accent);font-style:italic}
+.cta p{color:var(--text-dim);font-size:15px;max-width:640px;margin:0 auto 24px;line-height:1.6}
+.cta .cta-btn{display:inline-block;padding:14px 32px;background:var(--accent);color:#0f0a1a;font-family:'Inter';font-weight:600;font-size:13px;letter-spacing:.1em;text-transform:uppercase;border-radius:999px;transition:all .2s}
+.cta .cta-btn:hover{background:#e8c896;transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,180,131,.3)}
+
+.note{font-size:11px;color:var(--text-muted);font-family:'Inter';margin-top:10px;font-style:italic}
+.footer{margin-top:80px;padding:28px 48px;border-top:1px solid var(--border);color:var(--text-dim);font-size:12px;font-family:'Inter';text-align:center;letter-spacing:.05em}
+.footer em{color:var(--accent);font-style:italic;font-family:'Cormorant Garamond',serif;font-size:14px}
+
+@media (max-width:900px){
+  .content{padding:32px 20px 64px}
+  .hero h1{font-size:36px}
+  .kpi-grid,.kpi-grid.four{grid-template-columns:repeat(2,1fr)}
+  .grid-2,.grid-3,.grid-4,.alert-block{grid-template-columns:1fr}
+  .cta h2{font-size:28px}
+  .cta{padding:32px 20px}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="brand">
+    <div class="logo">☽</div>
+    <span>Escucho al Universo</span>
+    <span class="sep">·</span>
+    <span class="ag">Diagnóstico Nebulab</span>
+  </div>
+  <div class="meta">
+    <span class="pulse"></span>
+    <span>Sep 2024 — Abr 2026</span>
+    <span style="color:var(--text-muted)">|</span>
+    <span>Actualizado 14-abr-2026</span>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button class="tab-btn active" data-tab="overview">✦ Overview</button>
+  <button class="tab-btn" data-tab="performance">📈 Performance mensual</button>
+  <button class="tab-btn" data-tab="meta">🎯 Meta Ads</button>
+  <button class="tab-btn" data-tab="productos">🛍️ Productos</button>
+  <button class="tab-btn" data-tab="retencion">🔁 Retención</button>
+  <button class="tab-btn" data-tab="alertas">⚠️ Alertas</button>
+  <button class="tab-btn" data-tab="oportunidades">💎 Oportunidades</button>
+  <button class="tab-btn" data-tab="plan">✅ Plan de acción</button>
+</nav>
+
+<main class="content">
+
+<!-- =========================== OVERVIEW =========================== -->
+<section class="tab-panel active" id="overview">
+  <div class="hero boxed">
+    <div class="eyebrow">Diagnóstico · Paid Media & Retención</div>
+    <h1><span class="accent">Escuchamos</span> tu cuenta<br>durante <span class="accent2">19 meses</span>.</h1>
+    <div class="sub">La cuenta es rentable: <strong style="color:var(--verde)">ROAS blended 9.2x</strong>, ARS 83.3M facturados con ARS 8.17M invertidos en Meta. No hay nada roto en el paid media. El verdadero leverage está en lo que pasa <em style="color:var(--accent)">después</em> de la primera compra, y en defender la eficiencia mientras el CPM sube.</div>
+    <div class="chips">
+      <span class="chip verde">ROAS 9.2x blended</span>
+      <span class="chip dorado">AOV ARS 40K</span>
+      <span class="chip amatista">1,965 clientes</span>
+      <span class="chip rojo">5.9% recompra</span>
+      <span class="chip naranja">CPM +151% en 2 años</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Números macro de la cuenta</div>
+        <div class="section-sub">Acumulado Sep 2024 – Abr 2026 · fuente: Meta Ads + TiendaNube</div>
+      </div>
+    </div>
+    <div class="kpi-grid four">
+      <div class="card kpi"><div class="label">Revenue TiendaNube</div><div class="value">ARS 83.3M</div><div class="delta">Ventas brutas 19 meses</div></div>
+      <div class="card kpi"><div class="label">Inversión Meta</div><div class="value">ARS 8.17M</div><div class="delta">Total histórico</div></div>
+      <div class="card kpi"><div class="label">ROAS Blended</div><div class="value" style="color:var(--verde)">9.2x</div><div class="delta verde">Margen para escalar ✓</div></div>
+      <div class="card kpi"><div class="label">Órdenes pagadas</div><div class="value">2,082</div><div class="delta">1,965 clientes únicos</div></div>
+    </div>
+    <div class="kpi-grid four">
+      <div class="card kpi"><div class="label">AOV promedio</div><div class="value">ARS 40K</div><div class="delta">Ticket medio</div></div>
+      <div class="card kpi"><div class="label">CAC promedio</div><div class="value">ARS 5,094</div><div class="delta">Sano vs LTV</div></div>
+      <div class="card kpi"><div class="label">Tasa recompra</div><div class="value" style="color:var(--rojo)">5.9%</div><div class="delta rojo">94% no vuelve nunca</div></div>
+      <div class="card kpi"><div class="label">CPM actual</div><div class="value" style="color:var(--naranja)">ARS 3,157</div><div class="delta naranja">+151% vs jul-2024</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Las dos alertas que mueven la aguja</div>
+        <div class="section-sub">Los dos números que explican todo lo que hay que corregir en el próximo trimestre</div>
+      </div>
+    </div>
+    <div class="alert-block">
+      <div class="alert-big rojo">
+        <span class="tag">Alerta crítica · Retención</span>
+        <h3>Solo el <span class="big-num">5.9%</span> de los clientes vuelve a comprar</h3>
+        <p>De los <strong>1,965 clientes</strong>, solo <strong>114 volvieron a comprar</strong>. El cliente de 1 compra vale ARS 39K. El de 3+ compras vale <strong>ARS 282K — 7.2x más</strong>. El negocio está adquiriendo clientes que podrían valer 7x más si volvieran.</p>
+        <div class="impacto">Mover la aguja al 15% de recompra = <strong>+ARS 7.1M anuales sin un peso más en ads.</strong></div>
+      </div>
+      <div class="alert-big naranja">
+        <span class="tag">Alerta alta · Inflación de CPM</span>
+        <h3>El CPM subió <span class="big-num">+151%</span> en menos de 2 años</h3>
+        <p>De <strong>ARS 1,258 (jul-24)</strong> a <strong>ARS 3,157 (mar-26)</strong>. A este ritmo, el ROAS 9.2x no se sostiene sin mejorar el creative. Las <strong>secuencias</strong> (CPM 1,352) y los <strong>contenidos cortos</strong> (CPM 851) son la salida — no los videos producidos.</p>
+        <div class="impacto">Rotar al mix de formatos eficientes = <strong>mantener ROAS &gt; 9x con el mismo budget.</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Evolución mensual — ROAS vs CPM</div>
+        <div class="section-sub">El ROAS tiene picos estacionales (Nov, Dic, Ene, Mar, Abr) pero el CPM sube sostenidamente. La ventana para capitalizar eficiencia se está cerrando.</div>
+      </div>
+    </div>
+    <div class="card chart-card">
+      <div class="chart-box tall"><canvas id="chart-roas-cpm"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== PERFORMANCE =========================== -->
+<section class="tab-panel" id="performance">
+  <div class="hero">
+    <div class="eyebrow">Performance mensual</div>
+    <h1>19 meses · <span class="accent">ARS 83.3M</span> en revenue</h1>
+    <div class="sub">Lectura mes por mes. Meses PEAK con ROAS &gt; 10x: Nov, Dic, Ene, Mar, Abr. Meses VALLE con ROAS &lt; 7x: Ago, Feb, Oct.</div>
+  </div>
+
+  <div class="filters">
+    <select id="year-filter">
+      <option value="all">Todos los años</option>
+      <option value="2024">2024 (sep-dic)</option>
+      <option value="2025">2025</option>
+      <option value="2026">2026 (parcial)</option>
+    </select>
+    <select id="roas-filter">
+      <option value="all">Todos los ROAS</option>
+      <option value="peak">PEAK (&gt;10x)</option>
+      <option value="medio">Medio (7-10x)</option>
+      <option value="valle">VALLE (&lt;7x)</option>
+    </select>
+    <div class="count">Mostrando <strong id="mes-count">20</strong> de 20 meses</div>
+  </div>
+
+  <div class="tbl-wrap"><div class="tbl-scroll">
+    <table id="perf-table">
+      <thead><tr>
+        <th>Mes</th>
+        <th class="num">Spend Meta</th>
+        <th class="num">Revenue TN</th>
+        <th class="num">ROAS</th>
+        <th class="num">Órdenes</th>
+        <th class="num">CAC</th>
+        <th>Clasificación</th>
+      </tr></thead>
+      <tbody id="perf-body"></tbody>
+    </table>
+  </div></div>
+
+  <div class="section grid-2">
+    <div class="card chart-card">
+      <h3>Spend vs Revenue mensual</h3>
+      <div class="sub">Barras: spend Meta · Línea: revenue TiendaNube</div>
+      <div class="chart-box"><canvas id="chart-spend-rev"></canvas></div>
+    </div>
+    <div class="card chart-card">
+      <h3>ROAS mensual</h3>
+      <div class="sub">Picos estacionales claros en noviembre-enero</div>
+      <div class="chart-box"><canvas id="chart-roas-mensual"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="card chart-card">
+      <h3>Calendario estacional recomendado para 2026-2027</h3>
+      <div class="sub">Budget mensual sugerido siguiendo la curva histórica de ROAS · Total anual optimizado</div>
+      <div class="chart-box tall"><canvas id="chart-calendario"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== META ADS =========================== -->
+<section class="tab-panel" id="meta">
+  <div class="hero">
+    <div class="eyebrow">Meta Ads · Breakdown por formato, audiencia y geografía</div>
+    <h1>Dónde está la <span class="accent">eficiencia real</span></h1>
+    <div class="sub">La paradoja de los combos: CPM más bajo (ARS 1,341) + AOV más alto (ARS 65K) = solo 6.3% del spend. El ROI potencial de rebalancear budget es el más alto de toda la cuenta.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Formatos creativos por eficiencia</div>
+        <div class="section-sub">Las secuencias y los contenidos cortos son el antídoto contra la inflación de CPM</div>
+      </div>
+    </div>
+    <div class="tbl-wrap"><div class="tbl-scroll">
+      <table>
+        <thead><tr>
+          <th>Formato</th>
+          <th class="num">Inversión</th>
+          <th class="num">% del spend</th>
+          <th class="num">CPM promedio</th>
+          <th>Eficiencia</th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="bold">Video (estándar)</td><td class="num">ARS 4,293,919</td><td class="num">52.6%</td><td class="num">ARS 2,230</td><td><span class="badge naranja">MEDIA</span></td></tr>
+          <tr><td class="bold">Carrusel</td><td class="num">ARS 1,532,696</td><td class="num">18.8%</td><td class="num">ARS 2,323</td><td><span class="badge naranja">MEDIA</span></td></tr>
+          <tr><td class="bold">Secuencia</td><td class="num">ARS 870,590</td><td class="num">10.7%</td><td class="num" style="color:var(--verde)">ARS 1,352</td><td><span class="badge verde">ALTA ✦</span></td></tr>
+          <tr><td class="bold">Imagen</td><td class="num">ARS 535,884</td><td class="num">6.6%</td><td class="num">ARS 1,626</td><td><span class="badge dorado">BUENA</span></td></tr>
+          <tr><td class="bold">Otros (Contenidos CORTO)</td><td class="num">ARS 933,273</td><td class="num">11.4%</td><td class="num" style="color:var(--verde)">ARS 1,117</td><td><span class="badge verde">ALTA ✦</span></td></tr>
+        </tbody>
+      </table>
+    </div></div>
+    <div class="note">✦ Los formatos "Contenido corto" y "Secuencias" combinan CPM bajo + capacidad de escala. Son el formato prioritario para Q2-Q3 2026.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Top ads por CPM eficiente</div>
+        <div class="section-sub">Los que ya funcionan y están sub-escalados · mínimo ARS 50K de spend histórico</div>
+      </div>
+    </div>
+    <div class="tbl-wrap"><div class="tbl-scroll">
+      <table>
+        <thead><tr>
+          <th>Ad</th>
+          <th>Formato</th>
+          <th class="num">Spend histórico</th>
+          <th class="num">CPM</th>
+          <th>Acción</th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="bold">Reme2</td><td>Otro</td><td class="num">ARS 80,751</td><td class="num" style="color:var(--verde)">ARS 829</td><td><span class="badge verde">Escalar</span></td></tr>
+          <tr><td class="bold">Video / Contenidos CORTO</td><td>Video</td><td class="num">ARS 84,174</td><td class="num" style="color:var(--verde)">ARS 851</td><td><span class="badge verde">Escalar</span></td></tr>
+          <tr><td class="bold">Carr / Estilo INDIVIDUAL</td><td>Carrusel</td><td class="num">ARS 65,426</td><td class="num" style="color:var(--verde)">ARS 948</td><td><span class="badge dorado">Probar en nuevos ad sets</span></td></tr>
+          <tr><td class="bold">MockUp / Contenidos de la Agenda</td><td>Otro</td><td class="num">ARS 50,011</td><td class="num" style="color:var(--verde)">ARS 1,072</td><td><span class="badge verde">Escalar (Q3)</span></td></tr>
+          <tr><td class="bold">Imagen // UPC</td><td>Imagen</td><td class="num">ARS 151,550</td><td class="num" style="color:var(--verde)">ARS 1,091</td><td><span class="badge rojo">⚡ Reactivar (apagado hoy)</span></td></tr>
+          <tr><td class="bold">secuencia_combos</td><td>Secuencia</td><td class="num">ARS 453,045</td><td class="num" style="color:var(--verde)">ARS 1,260</td><td><span class="badge verde">Escalar a CAPA 1D</span></td></tr>
+          <tr><td class="bold">secuencia_catálogo</td><td>Secuencia</td><td class="num">ARS 312,637</td><td class="num" style="color:var(--verde)">ARS 1,482</td><td><span class="badge dorado">Mantener</span></td></tr>
+          <tr><td class="bold">Video // UPC</td><td>Video</td><td class="num">ARS 238,945</td><td class="num">ARS 1,853</td><td><span class="badge gris">Rotar creative</span></td></tr>
+          <tr><td class="bold">01_VID_COL_DIC</td><td>Video</td><td class="num">ARS 836,000</td><td class="num" style="color:var(--rojo)">ARS 1,961</td><td><span class="badge rojo">⚠ Fatiga · apagar</span></td></tr>
+          <tr><td class="bold">01_VID_COL_NOV</td><td>Video</td><td class="num">ARS 471,000</td><td class="num" style="color:var(--rojo)">ARS 2,268</td><td><span class="badge rojo">⚠ Fatiga · reemplazar</span></td></tr>
+        </tbody>
+      </table>
+    </div></div>
+  </div>
+
+  <div class="section grid-2">
+    <div class="card chart-card">
+      <h3>Distribución por edad · inversión vs CPM</h3>
+      <div class="sub">El segmento 18-24 llega a 3.4x más barato. Solo 4.8% del spend.</div>
+      <div class="chart-box"><canvas id="chart-edad"></canvas></div>
+    </div>
+    <div class="card chart-card">
+      <h3>Distribución geográfica de revenue</h3>
+      <div class="sub">CABA + GBA + Prov BA = 62.2% · Córdoba y Santa Fe son mercados reales</div>
+      <div class="chart-box"><canvas id="chart-geo"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="card" style="background:linear-gradient(135deg,rgba(182,149,212,.08),rgba(212,180,131,.04));border-color:rgba(182,149,212,.3)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><span style="font-size:22px">💎</span><span class="badge amatista">INSIGHT</span></div>
+      <h4 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;margin-bottom:10px;letter-spacing:-.005em">La audiencia es 97.7% femenina. Es la marca más afín al género que hemos analizado.</h4>
+      <p style="color:var(--text-dim);line-height:1.65;font-size:14px">La distribución 25-44 (71% del spend) es el core y está bien asignada. Pero hay una <strong style="color:var(--text)">ventana abierta en 18-24</strong>: CPM ARS 905 vs ARS 3,110 del segmento 45-54. Si el CVR del segmento joven alcanza siquiera el 40% del 25-34, el CAC mejora significativamente. Un test de ARS 50K puede validar este segmento.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== PRODUCTOS =========================== -->
+<section class="tab-panel" id="productos">
+  <div class="hero">
+    <div class="eyebrow">Productos · Top 10 por revenue</div>
+    <h1>Los 3 caballos de batalla generan el <span class="accent">35%</span> del revenue total</h1>
+    <div class="sub">Coloreá, Diario Gratitud y UPC suman ARS 29.4M solos. Los combos tienen AOV de ARS 65K pero solo 16 unidades vendidas — la oportunidad más grande de la cuenta está ahí.</div>
+  </div>
+
+  <div class="tbl-wrap"><div class="tbl-scroll">
+    <table>
+      <thead><tr>
+        <th>#</th>
+        <th>Producto</th>
+        <th class="num">Revenue</th>
+        <th class="num">Unidades</th>
+        <th class="num">Precio avg</th>
+        <th>Tipo</th>
+        <th>Share del revenue</th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="bold" style="color:var(--accent)">1</td><td class="bold">Coloreá y aprendé · 22 Arcanos</td><td class="num">ARS 11,017,200</td><td class="num">388</td><td class="num">ARS 28,395</td><td><span class="badge dorado">Caballo batalla</span></td><td><div class="minibar"><div class="track"><div class="fill" style="width:100%"></div></div><span class="pct">13.2%</span></div></td></tr>
+        <tr><td class="bold" style="color:var(--accent)">2</td><td class="bold">Diario Gratitud</td><td class="num">ARS 10,706,700</td><td class="num">319</td><td class="num">ARS 33,563</td><td><span class="badge dorado">Caballo batalla</span></td><td><div class="minibar"><div class="track"><div class="fill" style="width:97%"></div></div><span class="pct">12.8%</span></div></td></tr>
+        <tr><td class="bold" style="color:var(--accent)">3</td><td class="bold">Un Placer Conocerme®</td><td class="num">ARS 7,713,650</td><td class="num">247</td><td class="num">ARS 31,229</td><td><span class="badge dorado">Gateway</span></td><td><div class="minibar"><div class="track"><div class="fill" style="width:70%"></div></div><span class="pct">9.3%</span></div></td></tr>
+        <tr><td>4</td><td class="bold">Oráculo AmarMe</td><td class="num">ARS 3,591,600</td><td class="num">109</td><td class="num">ARS 32,950</td><td><span class="badge amatista">Cross-sell</span></td><td><div class="minibar"><div class="track"><div class="fill" style="width:33%"></div></div><span class="pct">4.3%</span></div></td></tr>
+        <tr><td>5</td><td class="bold">Agenda 2025 Tarot</td><td class="num">ARS 2,894,131</td><td class="num">98</td><td class="num">ARS 29,532</td><td><span class="badge verde">Renovación anual</span></td><td><div class="minibar"><div class="track"><div class="fill" style="width:26%"></div></div><span class="pct">3.5%</span></div></td></tr>
+        <tr><td>6</td><td class="bold">Diario Gratitud (PREVENTA)</td><td class="num">ARS 2,752,800</td><td class="num">93</td><td class="num">ARS 29,600</td><td><span class="badge verde">Preventa</span></td><td><div class="minibar"><div class="track"><div class="fill" style="width:25%"></div></div><span class="pct">3.3%</span></div></td></tr>
+        <tr><td>7</td><td class="bold">Agenda 2025 Suerte</td><td class="num">ARS 2,396,796</td><td class="num">83</td><td class="num">ARS 28,877</td><td><span class="badge verde">Renovación anual</span></td><td><div class="minibar"><div class="track"><div class="fill" style="width:22%"></div></div><span class="pct">2.9%</span></div></td></tr>
+        <tr><td>8</td><td class="bold">Agenda 2025 Astros</td><td class="num">ARS 1,141,549</td><td class="num">40</td><td class="num">ARS 28,539</td><td><span class="badge verde">Renovación anual</span></td><td><div class="minibar"><div class="track"><div class="fill" style="width:10%"></div></div><span class="pct">1.4%</span></div></td></tr>
+        <tr><td>9</td><td class="bold" style="color:var(--accent2)">Combo Diario Gratitud + AmarMe</td><td class="num">ARS 1,055,585</td><td class="num">16</td><td class="num" style="color:var(--accent)">ARS 65,974</td><td><span class="badge amatista">★ Combo AOV alto</span></td><td><div class="minibar"><div class="track"><div class="fill" style="width:10%"></div></div><span class="pct">1.3%</span></div></td></tr>
+        <tr><td>10</td><td class="bold" style="color:var(--accent2)">Combo Monarca</td><td class="num">ARS 934,656</td><td class="num">16</td><td class="num" style="color:var(--accent)">ARS 58,416</td><td><span class="badge amatista">★ Combo AOV alto</span></td><td><div class="minibar"><div class="track"><div class="fill" style="width:8%"></div></div><span class="pct">1.1%</span></div></td></tr>
+      </tbody>
+    </table>
+  </div></div>
+
+  <div class="section grid-2">
+    <div class="card" style="background:linear-gradient(135deg,rgba(212,180,131,.08),rgba(212,180,131,.02));border-color:rgba(212,180,131,.3)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">★</span><span class="badge dorado">COMBO PARADOX</span></div>
+      <h4 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;margin-bottom:10px">Los combos son el mejor ratio del negocio — y están sub-explotados</h4>
+      <p style="color:var(--text-dim);line-height:1.65;font-size:14px">CPM en ads: <strong style="color:var(--verde)">ARS 1,341</strong> (segundo más bajo). AOV: <strong style="color:var(--accent)">ARS 58,416 – 65,974</strong> (más del doble del AOV promedio). Y recibe solo <strong style="color:var(--text)">6.3% del spend</strong>.</p>
+      <p style="color:var(--text-dim);line-height:1.65;font-size:14px;margin-top:10px">Subir el spend a <strong style="color:var(--text)">15-20%</strong> con la <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;color:var(--accent)">secuencia_combos</code> (ya creada, ya probada) debería mejorar el ROAS blended sin nuevo creative.</p>
+    </div>
+    <div class="card" style="background:linear-gradient(135deg,rgba(182,149,212,.06),rgba(182,149,212,.02));border-color:rgba(182,149,212,.3)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">⚡</span><span class="badge amatista">SUB-INVERTIDO</span></div>
+      <h4 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;margin-bottom:10px">UPC: tercer producto más grande, solo 9.6% del spend</h4>
+      <p style="color:var(--text-dim);line-height:1.65;font-size:14px">Un Placer Conocerme generó <strong style="color:var(--text)">ARS 7.7M</strong> con CPM de <strong style="color:var(--verde)">ARS 1,743</strong> en ads. Su mejor creative (<code style="background:var(--surface2);padding:2px 6px;border-radius:4px;color:var(--accent)">Imagen // UPC</code>, CPM 1,091) <strong style="color:var(--rojo)">está apagado</strong> actualmente.</p>
+      <p style="color:var(--text-dim);line-height:1.65;font-size:14px;margin-top:10px">UPC es además el <strong style="color:var(--text)">gateway product</strong> de la cuenta — quienes lo compran son los que más recompran (UPC → AmarMe → Agenda). Es el camino más corto a mejorar la retención.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== RETENCIÓN =========================== -->
+<section class="tab-panel" id="retencion">
+  <div class="hero boxed">
+    <div class="eyebrow">Retención · El lever que más mueve la aguja</div>
+    <h1>El <span class="accent2">94.2%</span> de los clientes<br>nunca volvió.</h1>
+    <div class="sub">Entre 1 compra y 3+ compras, el LTV se multiplica por 7.2x. El negocio está adquiriendo clientes a ARS 5,094 que podrían valer ARS 282K. El problema no es el paid media — es lo que pasa después.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-title">LTV por segmento de recompra</div>
+        <div class="section-sub">Los 114 clientes que volvieron concentran el valor real de la base</div>
+      </div>
+    </div>
+    <div class="kpi-grid">
+      <div class="card kpi"><div class="label">1 compra (94.2%)</div><div class="value">ARS 39,370</div><div class="delta">1,851 clientes</div></div>
+      <div class="card kpi"><div class="label">2 compras (4.9%)</div><div class="value" style="color:var(--accent)">ARS 80,893</div><div class="delta verde">96 clientes · 2.1x LTV</div></div>
+      <div class="card kpi"><div class="label">3+ compras (0.9%)</div><div class="value" style="color:var(--accent2)">ARS 282,813</div><div class="delta verde">18 clientes · 7.2x LTV ★</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Segmentación de la base (1,965 clientes)</div>
+        <div class="section-sub">Dónde enfocar la comunicación primero. Los 334 Nuevos son la prioridad crítica — si no se activan en 60-90 días, se convierten en dormidos.</div>
+      </div>
+    </div>
+    <div class="grid-4">
+      <div class="card segcard"><div class="s-count">334</div><div class="s-name">Nuevos</div><div class="s-desc">1 compra, últimos 90 días · fresh</div><span class="s-prio" style="background:rgba(201,123,123,.15);color:var(--rojo)">CRÍTICA</span></div>
+      <div class="card segcard"><div class="s-count">222</div><div class="s-name">Dormidos recientes</div><div class="s-desc">1 compra, 91-180 días · aún rescatables</div><span class="s-prio" style="background:rgba(232,168,124,.15);color:var(--naranja)">ALTA</span></div>
+      <div class="card segcard"><div class="s-count">78</div><div class="s-name">En riesgo</div><div class="s-desc">2 compras, +180 días sin volver</div><span class="s-prio" style="background:rgba(232,168,124,.15);color:var(--naranja)">ALTA</span></div>
+      <div class="card segcard"><div class="s-count">13</div><div class="s-name">Campeones</div><div class="s-desc">3+ compras activos · LTV ARS 282K</div><span class="s-prio" style="background:rgba(212,180,131,.15);color:var(--accent)">VIP ★</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Mapa de cross-sell real</div>
+        <div class="section-sub">Los caminos de segunda compra que ya existen en los datos · qué ofrecer a quién</div>
+      </div>
+    </div>
+    <div class="tbl-wrap"><div class="tbl-scroll">
+      <table>
+        <thead><tr>
+          <th>Primera compra</th>
+          <th>Segunda compra más frecuente</th>
+          <th class="num">Veces observado</th>
+          <th>Insight</th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="bold">Agenda 2024</td><td>Agenda 2025</td><td class="num">25</td><td><span class="badge verde">Ciclo anual · activar Jul-Ago</span></td></tr>
+          <tr><td class="bold">Diario Gratitud</td><td>Diario Gratitud (recompra)</td><td class="num">8</td><td><span class="badge dorado">Regalo / reemplazo</span></td></tr>
+          <tr><td class="bold">UPC</td><td>AmarMe</td><td class="num">6</td><td><span class="badge amatista">Gateway → AmarMe</span></td></tr>
+          <tr><td class="bold">UPC</td><td>Agenda</td><td class="num">6</td><td><span class="badge amatista">Gateway → Agenda</span></td></tr>
+          <tr><td class="bold">Coloreá</td><td>Coloreá (recompra)</td><td class="num">4</td><td><span class="badge dorado">Regalo</span></td></tr>
+          <tr><td class="bold">AmarMe</td><td>Diario Gratitud</td><td class="num">3</td><td><span class="badge verde">Cross-sell natural</span></td></tr>
+          <tr><td class="bold">Agenda 2025</td><td>Diario Gratitud</td><td class="num">3</td><td><span class="badge verde">Cross-sell natural</span></td></tr>
+          <tr><td class="bold">Coloreá</td><td>Diario Gratitud</td><td class="num">3</td><td><span class="badge verde">Cross-sell natural</span></td></tr>
+        </tbody>
+      </table>
+    </div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-title">La oportunidad real — en números</div>
+        <div class="section-sub">Mover la tasa de recompra del 5.9% actual al objetivo. Sin un peso más en adquisición.</div>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="card" style="text-align:center;padding:28px"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--text-dim);margin-bottom:10px">Escenario conservador</div><div style="font-family:'Cormorant Garamond',serif;font-size:46px;font-weight:700;color:var(--verde);line-height:1">+ARS 3.2M</div><div style="color:var(--text-dim);font-size:13px;margin-top:10px;line-height:1.5">Llegar al <strong style="color:var(--text)">10% de recompra</strong> = 80 clientes adicionales de 2ª compra</div></div>
+      <div class="card" style="text-align:center;padding:28px;border-color:rgba(212,180,131,.4);background:linear-gradient(135deg,rgba(212,180,131,.06),transparent)"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--accent);margin-bottom:10px">Escenario moderado ★</div><div style="font-family:'Cormorant Garamond',serif;font-size:46px;font-weight:700;color:var(--accent);line-height:1">+ARS 7.1M</div><div style="color:var(--text-dim);font-size:13px;margin-top:10px;line-height:1.5">Llegar al <strong style="color:var(--text)">15% de recompra</strong> = 178 clientes adicionales · alcanzable en 6 meses</div></div>
+      <div class="card" style="text-align:center;padding:28px"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--text-dim);margin-bottom:10px">Escenario agresivo</div><div style="font-family:'Cormorant Garamond',serif;font-size:46px;font-weight:700;color:var(--accent2);line-height:1">+ARS 11M</div><div style="color:var(--text-dim);font-size:13px;margin-top:10px;line-height:1.5">Llegar al <strong style="color:var(--text)">20% de recompra</strong> = 278 clientes adicionales</div></div>
+    </div>
+    <div class="note" style="text-align:center;margin-top:20px">* Calculado sobre AOV de segunda compra ARS 40K. Base: 1,851 clientes de una sola compra.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Flujos de retención propuestos</div>
+        <div class="section-sub">5 flujos · Email + WhatsApp + Meta Custom Audience · cada uno diseñado para un segmento de la base</div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card insight i-oportunidad"><div class="head"><span class="icon">🌱</span><span class="badge dorado">FLUJO 1</span></div><h4>Onboarding post-compra (30 días)</h4><p>Para los <strong>334 Nuevos</strong>. 5 touchpoints: confirmación → WhatsApp entrega → contenido de uso día 10 → social proof día 20 → oferta 2ª compra día 30. <strong>KPI:</strong> tasa de segunda compra en 60 días.</p></div>
+      <div class="card insight i-alerta-naranja"><div class="head"><span class="icon">💫</span><span class="badge naranja">FLUJO 2</span></div><h4>Winback Dormidos Recientes (91-180 días)</h4><p>Para los <strong>222 clientes</strong> que compraron hace 3-6 meses y no volvieron. 3 emails + 1 Meta ad con el producto complementario. Último email con 15% off válido 7 días.</p></div>
+      <div class="card insight i-patron"><div class="head"><span class="icon">📅</span><span class="badge verde">FLUJO 3</span></div><h4>Reactivación Agenda (ciclo anual)</h4><p>Timing Jul-Ago, antes del lanzamiento. <strong>320 compradores de agenda anteriores</strong> con preventa exclusiva. Ya pasó orgánicamente: 25 volvieron solos. Con comunicación activa se puede triplicar.</p></div>
+      <div class="card insight i-oportunidad"><div class="head"><span class="icon">👑</span><span class="badge dorado">FLUJO 4 · VIP</span></div><h4>Campeones (3+ compras)</h4><p>Los <strong>13 Campeones</strong> valen ARS 282K de LTV promedio. WhatsApp personal de la creadora + acceso anticipado a lanzamientos + programa de embajadoras (UGC). Costo marginal: cero.</p></div>
+      <div class="card insight i-tendencia" style="grid-column:span 2"><div class="head"><span class="icon">🎯</span><span class="badge amatista">FLUJO 5 · PAID</span></div><h4>Campaña Meta de retención (Capa 3 del paid media)</h4><p>Custom Audience desde lista de TiendaNube (<strong>1,768 clientes opt-in</strong>) segmentada por producto comprado. 10% del budget mensual. ROAS esperado: <strong style="color:var(--verde)">20x+</strong>. Es audiencia que ya convirtió — CAC marginal. Se activa en <strong>1 semana</strong>.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== ALERTAS =========================== -->
+<section class="tab-panel" id="alertas">
+  <div class="hero">
+    <div class="eyebrow">Ineficiencias detectadas · Patrones identificados por el análisis</div>
+    <h1>8 señales que <span class="accent">requieren atención</span></h1>
+    <div class="sub">Ordenadas por urgencia. Las dos primeras son estructurales; las siguientes son tácticas que se resuelven en semanas.</div>
+  </div>
+
+  <div class="section grid-2">
+    <div class="card insight i-alerta">
+      <div class="head"><span class="icon">🔁</span><span class="badge rojo">CRÍTICA</span></div>
+      <h4>Sin flujo de recompra activo</h4>
+      <p><strong>94.2% de los clientes compra una sola vez.</strong> No hay email post-compra automatizado, no hay WhatsApp de seguimiento, no hay campaña Meta de retención. La base tiene <strong>1,768 clientes opt-in</strong> que se pueden activar en días — es plata dormida.</p>
+    </div>
+    <div class="card insight i-alerta-naranja">
+      <div class="head"><span class="icon">📈</span><span class="badge naranja">ALTA</span></div>
+      <h4>CPM subiendo sostenidamente (+151% en 24 meses)</h4>
+      <p>De <strong>ARS 1,258</strong> (jul-24) a <strong>ARS 3,157</strong> (mar-26). Si supera ARS 3,500 sostenido, hay que revisar estrategia de puja. Antídoto: rotar agresivamente a <strong>secuencias</strong> (CPM 1,352) y <strong>contenidos cortos</strong> (CPM 851).</p>
+    </div>
+    <div class="card insight i-alerta-naranja">
+      <div class="head"><span class="icon">💸</span><span class="badge naranja">ALTA</span></div>
+      <h4>39% de órdenes con descuento — ARS 3.35M en cupones</h4>
+      <p>Sin data clara de si el descuento mueve conversión o erosiona margen. <strong>Test mínimo:</strong> mismo ad set, un grupo con cupón y uno sin. Si la diferencia de CVR es &lt;15%, los cupones se están regalando a gente que hubiera comprado igual.</p>
+    </div>
+    <div class="card insight i-alerta-naranja">
+      <div class="head"><span class="icon">📉</span><span class="badge naranja">ALTA</span></div>
+      <h4>ROAS comprimido en últimos 3 meses</h4>
+      <p><strong>Feb-26: 6.7x · Mar-26: 7.2x</strong> vs promedio histórico 9.2x. Puede ser estacionalidad (feb-mar son meses medios históricamente) o señal de pérdida de eficiencia. Si abr-jun no rebota a 9x+, la estructura de campañas necesita rebalance.</p>
+    </div>
+    <div class="card insight i-oportunidad">
+      <div class="head"><span class="icon">★</span><span class="badge dorado">INEFICIENCIA · COMBOS</span></div>
+      <h4>Combos: mejor ratio, menor inversión</h4>
+      <p>CPM más bajo de la cuenta (ARS 1,341) y AOV más alto (ARS 65K) reciben <strong>solo el 6.3% del spend</strong>. Subir a 15-20% con la <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;color:var(--accent)">secuencia_combos</code> (ya existe, ya funciona) es quick win.</p>
+    </div>
+    <div class="card insight i-oportunidad">
+      <div class="head"><span class="icon">⚡</span><span class="badge dorado">INEFICIENCIA · UPC</span></div>
+      <h4>UPC sub-invertido · creative ganador apagado</h4>
+      <p>Tercer producto más grande (ARS 7.7M revenue). Solo 9.6% del spend. Su mejor creative <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;color:var(--accent)">Imagen // UPC</code> (CPM 1,091) <strong>está apagado</strong> actualmente. Prender + asignar ARS 30-50K es acción de 5 minutos.</p>
+    </div>
+    <div class="card insight i-tendencia">
+      <div class="head"><span class="icon">🔥</span><span class="badge amatista">FATIGA CREATIVE</span></div>
+      <h4>Videos de colección con CPM 2-3x mayor al promedio</h4>
+      <p><code style="background:var(--surface2);padding:2px 6px;border-radius:4px;color:var(--accent)">01_VID_COL_NOV</code> (CPM 2,268) y <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;color:var(--accent)">01_VID_COL_DIC</code> (CPM 1,961) concentran <strong>ARS 1.3M de spend histórico</strong>. Son los más caros de la cuenta. Probable fatiga de audience. Reemplazar antes de que agoten ROI.</p>
+    </div>
+    <div class="card insight i-patron">
+      <div class="head"><span class="icon">📊</span><span class="badge verde">DATA GAP</span></div>
+      <h4>Exports de Meta sin conversión por ad</h4>
+      <p>Los exports actuales tienen breakdown demográfico, lo que <strong>oculta ROAS y CTR por creativo</strong>. Para optimizar por creative se necesita un export adicional sin breakdown. <strong>Acción:</strong> solicitar nuevo export para el próximo ciclo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== OPORTUNIDADES =========================== -->
+<section class="tab-panel" id="oportunidades">
+  <div class="hero boxed">
+    <div class="eyebrow">Oportunidades priorizadas</div>
+    <h1>5 palancas<br><span class="accent2">ordenadas por impacto</span>.</h1>
+    <div class="sub">La prioridad 1 es la más grande por impacto/esfuerzo y no requiere más inversión en ads. Las siguientes son tácticas de paid media que se pueden ejecutar en las próximas 2-4 semanas.</div>
+  </div>
+
+  <div class="section">
+    <div class="grid-2">
+      <div class="card opp"><div class="rank">01</div><span class="prio-tag p1">Prioridad 1 · Máximo impacto</span><h4>Activar la retención</h4><p class="desc">Pasar del <strong>5.9%</strong> al <strong>12-15%</strong> de recompra es el lever más grande del negocio. Email post-compra + WhatsApp + Capa 3 de Meta retención. <strong>No requiere más inversión en ads.</strong></p><div class="metric-row"><div><div class="m-label">Impacto anual</div><div class="m-val">+ARS 7.1M</div></div><div><div class="m-label">Esfuerzo</div><div class="m-val">Medio</div></div><div><div class="m-label">Timing</div><div class="m-val">6 meses</div></div></div></div>
+      <div class="card opp"><div class="rank">02</div><span class="prio-tag p1">Prioridad 2 · Alto impacto</span><h4>Escalar Combos en paid</h4><p class="desc">CPM ARS 1,341 + AOV ARS 60-65K. Subir del <strong>6.3% al 20%</strong> del budget usando la <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;color:var(--accent)">secuencia_combos</code> ya existente. Debería mover el ROAS blended al alza.</p><div class="metric-row"><div><div class="m-label">ROAS esperado</div><div class="m-val">12x+</div></div><div><div class="m-label">Esfuerzo</div><div class="m-val">Bajo</div></div><div><div class="m-label">Timing</div><div class="m-val">1 semana</div></div></div></div>
+      <div class="card opp"><div class="rank">03</div><span class="prio-tag p2">Prioridad 3 · Defensivo</span><h4>Combatir inflación de CPM con secuencias</h4><p class="desc">Secuencias CPM <strong>ARS 1,352</strong> vs video <strong>ARS 2,230</strong>. Producir <strong>4-5 secuencias nuevas por cuatrimestre</strong> para mantener CPM bajo mientras el inventario de Meta se satura.</p><div class="metric-row"><div><div class="m-label">Target CPM</div><div class="m-val">&lt;2,500</div></div><div><div class="m-label">Esfuerzo</div><div class="m-val">Medio</div></div><div><div class="m-label">Timing</div><div class="m-val">Continuo</div></div></div></div>
+      <div class="card opp"><div class="rank">04</div><span class="prio-tag p2">Prioridad 4 · Validación</span><h4>Testear segmento 18-24</h4><p class="desc">CPM <strong>ARS 905</strong> — el más barato de todos. Actualmente recibe 4.8% del budget. Test de <strong>ARS 50K</strong> con el creative <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;color:var(--accent)">Video / Contenidos CORTO</code> para validar conversión.</p><div class="metric-row"><div><div class="m-label">Budget test</div><div class="m-val">ARS 50K</div></div><div><div class="m-label">Esfuerzo</div><div class="m-val">Bajo</div></div><div><div class="m-label">Timing</div><div class="m-val">2 semanas</div></div></div></div>
+      <div class="card opp" style="grid-column:span 2"><div class="rank">05</div><span class="prio-tag p3">Prioridad 5 · Planificación</span><h4>Budget siguiendo la curva estacional</h4><p class="desc">El ROAS varía de <strong>5.1x (Ago)</strong> a <strong>15.1x (Nov)</strong>. El budget debería seguir esa curva: pesado en <strong>Nov-Dic-Ene</strong> (40% del año), light en <strong>Agosto</strong> (freno). Hoy parece que se invierte plano sin aprovechar el timing energético de la audiencia.</p><div class="metric-row"><div><div class="m-label">Nov-Ene budget</div><div class="m-val">ARS 2.8M</div></div><div><div class="m-label">Ago budget</div><div class="m-val">ARS 250K</div></div><div><div class="m-label">Esfuerzo</div><div class="m-val">Bajo</div></div><div><div class="m-label">Timing</div><div class="m-val">Anual</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== PLAN =========================== -->
+<section class="tab-panel" id="plan">
+  <div class="hero">
+    <div class="eyebrow">Plan de acción · Próximas 4 semanas</div>
+    <h1>10 movimientos <span class="accent">accionables</span></h1>
+    <div class="sub">Ordenados por prioridad y complejidad. Click en el estado para marcar como hecho. Todos los quick wins se resuelven en la semana 1.</div>
+  </div>
+
+  <div class="section" id="actions-list"></div>
+
+  <div class="cta">
+    <h2>Ahora viene la parte <em>creativa</em>.</h2>
+    <p>Con el diagnóstico sobre la mesa, el siguiente paso es definir juntos la dirección creativa: qué voz, qué formatos, qué hooks funcionan con esta audiencia y cómo materializarlos en una nueva tanda de ads. Vamos a conversar.</p>
+    <a class="cta-btn" href="#" onclick="alert('Agendemos una sesión creativa para definir el siguiente paso.');return false">Agendar sesión creativa ✦</a>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  Preparado por <em>Nebulab</em> para Escucho al Universo · Diagnóstico Sep 2024 – Abr 2026 · Fuentes: Meta Ads + TiendaNube
+</footer>
+
+<script>
+/* =============== HELPERS =============== */
+const ars = n => 'ARS ' + Math.round(n).toLocaleString('es-AR');
+const arsK = n => n >= 1e6 ? 'ARS ' + (n/1e6).toFixed(1).replace('.',',') + 'M' : 'ARS ' + Math.round(n/1000) + 'K';
+const roas = n => n.toFixed(1).replace('.',',') + 'x';
+const num = n => Math.round(n).toLocaleString('es-AR');
+const pct = (n, dec=1) => n.toFixed(dec).replace('.',',') + '%';
+
+function roasBadge(r){
+  let cls = 'verde', label;
+  if(r >= 10) { cls='verde'; label='PEAK'; }
+  else if(r >= 7) { cls='dorado'; label='Medio'; }
+  else { cls='rojo'; label='VALLE'; }
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+/* =============== TABS =============== */
+function showTab(tabId){
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === tabId));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+document.querySelectorAll('.tab-btn').forEach(b => b.onclick = () => showTab(b.dataset.tab));
+
+/* =============== DATA · MENSUAL =============== */
+const MESES = [
+  {mes:'Sep-24', y:2024, spend:268945, rev:2928780, roas:10.9, ordenes:72, cac:3735, cpm:1258},
+  {mes:'Oct-24', y:2024, spend:319887, rev:2196394, roas:6.9, ordenes:58, cac:5515, cpm:1310},
+  {mes:'Nov-24', y:2024, spend:305867, rev:1833425, roas:6.0, ordenes:45, cac:6797, cpm:1370},
+  {mes:'Dic-24', y:2024, spend:393612, rev:5565161, roas:14.1, ordenes:142, cac:2772, cpm:1426},
+  {mes:'Ene-25', y:2025, spend:523844, rev:6068810, roas:11.6, ordenes:143, cac:3663, cpm:1510},
+  {mes:'Feb-25', y:2025, spend:328257, rev:2480053, roas:7.6, ordenes:58, cac:5660, cpm:1620},
+  {mes:'Mar-25', y:2025, spend:129702, rev:1783164, roas:13.7, ordenes:33, cac:3930, cpm:1700},
+  {mes:'Abr-25', y:2025, spend:179791, rev:2323073, roas:12.9, ordenes:43, cac:4181, cpm:1780},
+  {mes:'May-25', y:2025, spend:447076, rev:3923153, roas:8.8, ordenes:88, cac:5080, cpm:1820},
+  {mes:'Jun-25', y:2025, spend:522568, rev:4554771, roas:8.7, ordenes:100, cac:5226, cpm:1865},
+  {mes:'Jul-25', y:2025, spend:571092, rev:4881878, roas:8.5, ordenes:76, cac:7514, cpm:2100},
+  {mes:'Ago-25', y:2025, spend:357470, rev:1839750, roas:5.1, ordenes:39, cac:9166, cpm:2450},
+  {mes:'Sep-25', y:2025, spend:300209, rev:2627666, roas:8.8, ordenes:42, cac:7148, cpm:2800},
+  {mes:'Oct-25', y:2025, spend:276009, rev:2129625, roas:7.7, ordenes:32, cac:8625, cpm:3257},
+  {mes:'Nov-25', y:2025, spend:228302, rev:3440005, roas:15.1, ordenes:74, cac:3085, cpm:3100},
+  {mes:'Dic-25', y:2025, spend:408410, rev:3404125, roas:8.3, ordenes:89, cac:4589, cpm:3050},
+  {mes:'Ene-26', y:2026, spend:861093, rev:11197685, roas:13.0, ordenes:235, cac:3664, cpm:3000},
+  {mes:'Feb-26', y:2026, spend:804812, rev:5416316, roas:6.7, ordenes:106, cac:7593, cpm:3120},
+  {mes:'Mar-26', y:2026, spend:546865, rev:3924768, roas:7.2, ordenes:69, cac:7926, cpm:3157},
+  {mes:'Abr-26*', y:2026, spend:136805, rev:482218, roas:3.5, ordenes:9, cac:15201, cpm:3200, parcial:true}
+];
+
+/* =============== RENDER PERFORMANCE TABLE =============== */
+function renderPerf(){
+  const year = document.getElementById('year-filter').value;
+  const roasCat = document.getElementById('roas-filter').value;
+  let filtered = [...MESES];
+  if(year !== 'all') filtered = filtered.filter(m => m.y == year);
+  if(roasCat === 'peak') filtered = filtered.filter(m => m.roas >= 10);
+  else if(roasCat === 'medio') filtered = filtered.filter(m => m.roas >= 7 && m.roas < 10);
+  else if(roasCat === 'valle') filtered = filtered.filter(m => m.roas < 7);
+
+  const body = document.getElementById('perf-body');
+  body.innerHTML = filtered.map(m => {
+    const roasColor = m.roas >= 10 ? 'var(--verde)' : (m.roas >= 7 ? 'var(--accent)' : 'var(--rojo)');
+    return `<tr>
+      <td class="bold">${m.mes}${m.parcial ? ' <span style="color:var(--text-muted);font-size:11px">(parcial)</span>' : ''}</td>
+      <td class="num">${ars(m.spend)}</td>
+      <td class="num">${ars(m.rev)}</td>
+      <td class="num" style="color:${roasColor};font-weight:600">${roas(m.roas)}</td>
+      <td class="num">${m.ordenes}</td>
+      <td class="num">${ars(m.cac)}</td>
+      <td>${roasBadge(m.roas)}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-dim)">Sin resultados</td></tr>';
+  document.getElementById('mes-count').textContent = filtered.length;
+}
+document.getElementById('year-filter').addEventListener('change', renderPerf);
+document.getElementById('roas-filter').addEventListener('change', renderPerf);
+renderPerf();
+
+/* =============== CHART DEFAULTS =============== */
+Chart.defaults.color = '#9d8cb5';
+Chart.defaults.font.family = 'Inter';
+Chart.defaults.font.size = 11;
+Chart.defaults.borderColor = '#2d2245';
+
+const gridC = { color: 'rgba(45,34,69,0.5)', drawBorder: false };
+const gridCx = { color: 'rgba(45,34,69,0.25)', drawBorder: false };
+
+/* =============== CHART · ROAS vs CPM (Overview) =============== */
+new Chart(document.getElementById('chart-roas-cpm'), {
+  data: {
+    labels: MESES.map(m => m.mes),
+    datasets: [
+      {type:'line', label:'ROAS', data: MESES.map(m => m.roas), borderColor:'#d4b483', backgroundColor:'rgba(212,180,131,.1)', yAxisID:'y', tension:.35, fill:true, pointRadius:3, pointBackgroundColor:'#d4b483', borderWidth:2.5},
+      {type:'line', label:'CPM (ARS)', data: MESES.map(m => m.cpm), borderColor:'#c97b7b', backgroundColor:'rgba(201,123,123,.08)', yAxisID:'y1', tension:.35, fill:false, pointRadius:3, pointBackgroundColor:'#c97b7b', borderWidth:2.5, borderDash:[4,4]}
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    interaction: { mode:'index', intersect:false },
+    plugins: { legend: { position:'top', align:'end', labels:{usePointStyle:true, pointStyle:'circle', padding:16}} },
+    scales: {
+      x: { grid: gridCx, ticks:{maxRotation:0, autoSkip:true, maxTicksLimit:12} },
+      y: { position:'left', grid: gridC, title:{display:true, text:'ROAS (x)', color:'#d4b483'}, ticks:{callback:v=>v+'x'} },
+      y1:{ position:'right', grid:{drawOnChartArea:false}, title:{display:true, text:'CPM (ARS)', color:'#c97b7b'}, ticks:{callback:v=>(v/1000).toFixed(1)+'K'} }
+    }
+  }
+});
+
+/* =============== CHART · Spend vs Revenue =============== */
+new Chart(document.getElementById('chart-spend-rev'), {
+  data: {
+    labels: MESES.map(m => m.mes),
+    datasets: [
+      {type:'bar', label:'Spend', data: MESES.map(m => m.spend/1000), backgroundColor:'rgba(182,149,212,.7)', borderRadius:4, yAxisID:'y'},
+      {type:'line', label:'Revenue', data: MESES.map(m => m.rev/1000), borderColor:'#d4b483', backgroundColor:'rgba(212,180,131,.1)', yAxisID:'y1', tension:.35, fill:true, pointRadius:2, borderWidth:2.5}
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    interaction: { mode:'index', intersect:false },
+    plugins: { legend: { position:'top', align:'end', labels:{usePointStyle:true}} },
+    scales: {
+      x: { grid: gridCx, ticks:{maxRotation:45, autoSkip:true, maxTicksLimit:10, font:{size:10}} },
+      y: { position:'left', grid: gridC, ticks:{callback:v=>v+'K'}, title:{display:true, text:'Spend (ARS K)', color:'#b695d4'}},
+      y1:{ position:'right', grid:{drawOnChartArea:false}, ticks:{callback:v=>v/1000+'M'}, title:{display:true, text:'Revenue (ARS M)', color:'#d4b483'}}
+    }
+  }
+});
+
+/* =============== CHART · ROAS mensual =============== */
+new Chart(document.getElementById('chart-roas-mensual'), {
+  type:'bar',
+  data: {
+    labels: MESES.map(m => m.mes),
+    datasets: [{
+      data: MESES.map(m => m.roas),
+      backgroundColor: MESES.map(m => m.roas >= 10 ? 'rgba(127,176,105,.7)' : (m.roas >= 7 ? 'rgba(212,180,131,.7)' : 'rgba(201,123,123,.7)')),
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins: { legend:{display:false}, tooltip:{callbacks:{label:ctx=>'ROAS: '+roas(ctx.parsed.y)}} },
+    scales: {
+      x: { grid: gridCx, ticks:{maxRotation:45, autoSkip:true, font:{size:10}} },
+      y: { grid: gridC, ticks:{callback:v=>v+'x'} }
+    }
+  }
+});
+
+/* =============== CHART · Calendario estacional =============== */
+const CAL = [
+  {m:'Abr', b:500, roas:12.9},
+  {m:'May', b:450, roas:8.8},
+  {m:'Jun', b:450, roas:8.7},
+  {m:'Jul', b:500, roas:8.5},
+  {m:'Ago', b:250, roas:5.1},
+  {m:'Sep', b:500, roas:8.8},
+  {m:'Oct', b:500, roas:7.7},
+  {m:'Nov', b:800, roas:15.1},
+  {m:'Dic', b:1000, roas:11.2},
+  {m:'Ene', b:1000, roas:13.0}
+];
+new Chart(document.getElementById('chart-calendario'), {
+  data: {
+    labels: CAL.map(c => c.m),
+    datasets: [
+      {type:'bar', label:'Budget recomendado (ARS K)', data: CAL.map(c => c.b), backgroundColor:'rgba(212,180,131,.75)', borderRadius:6, yAxisID:'y'},
+      {type:'line', label:'ROAS histórico (x)', data: CAL.map(c => c.roas), borderColor:'#b695d4', backgroundColor:'rgba(182,149,212,.1)', yAxisID:'y1', tension:.4, fill:true, pointRadius:4, pointBackgroundColor:'#b695d4', borderWidth:2.5}
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins: { legend:{position:'top', align:'end', labels:{usePointStyle:true}} },
+    scales: {
+      x: { grid: gridCx },
+      y: { position:'left', grid: gridC, ticks:{callback:v=>'ARS '+v+'K'}, title:{display:true, text:'Budget', color:'#d4b483'} },
+      y1:{ position:'right', grid:{drawOnChartArea:false}, ticks:{callback:v=>v+'x'}, title:{display:true, text:'ROAS', color:'#b695d4'}}
+    }
+  }
+});
+
+/* =============== CHART · Edad =============== */
+new Chart(document.getElementById('chart-edad'), {
+  data: {
+    labels: ['18-24','25-34','35-44','45-54','55-64'],
+    datasets: [
+      {type:'bar', label:'Spend (ARS K)', data:[392,3017,2788,1292,547], backgroundColor:'rgba(212,180,131,.7)', borderRadius:4, yAxisID:'y'},
+      {type:'line', label:'CPM (ARS)', data:[905,1449,2290,3110,2959], borderColor:'#c97b7b', yAxisID:'y1', tension:.3, pointRadius:4, borderWidth:2.5, fill:false}
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'top',align:'end',labels:{usePointStyle:true}}},
+    scales: {
+      x:{ grid: gridCx },
+      y:{ position:'left', grid:gridC, ticks:{callback:v=>v+'K'}, title:{display:true,text:'Spend',color:'#d4b483'}},
+      y1:{ position:'right', grid:{drawOnChartArea:false}, ticks:{callback:v=>v+'K'}, title:{display:true,text:'CPM',color:'#c97b7b'}}
+    }
+  }
+});
+
+/* =============== CHART · Geo =============== */
+new Chart(document.getElementById('chart-geo'), {
+  type:'doughnut',
+  data: {
+    labels:['CABA (25.3%)','GBA (23.1%)','Prov. BA (13.8%)','Córdoba (11.8%)','Santa Fe (9.6%)','Mendoza (2.0%)','Neuquén (1.9%)','Otras (12.5%)'],
+    datasets:[{
+      data:[25.3,23.1,13.8,11.8,9.6,2.0,1.9,12.5],
+      backgroundColor:['#d4b483','#b695d4','#8ec5d4','#7fb069','#e8a87c','#c97b7b','#9d8cb5','#4a3d5e'],
+      borderColor:'#17102a', borderWidth:2
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false, cutout:'62%',
+    plugins:{legend:{position:'right', labels:{usePointStyle:true, padding:10, font:{size:11}}}}
+  }
+});
+
+/* =============== PLAN DE ACCIÓN =============== */
+const ACTIONS = [
+  {prio:'alta', titulo:'Subir lista de 1,768 clientes a Meta Custom Audience', desc:'Base opt-in de TiendaNube. Activa la Capa 3 de retención en ads y permite excluir compradores del targeting frío (ahorro inmediato).', impacto:'Quick win · ROAS esperado 20x+', tiempo:'Semana 1'},
+  {prio:'alta', titulo:'Reactivar "Imagen // UPC" (CPM 1,091)', desc:'El mejor creative de imagen de toda la cuenta está apagado. Prender y asignar ARS 30-50K. Acción de 5 minutos.', impacto:'Quick win · CPM 1,091 vs 3,157 promedio', tiempo:'Semana 1'},
+  {prio:'alta', titulo:'Reasignar budget a Combos (del 6.3% al 15-20%)', desc:'Usar la secuencia_combos existente. CPM 1,341 + AOV 65K = mejor ratio del negocio.', impacto:'Mueve el ROAS blended al alza', tiempo:'Semana 1'},
+  {prio:'alta', titulo:'Configurar email día 10 post-compra (onboarding)', desc:'El gap más grande hoy. Contenido de uso + ritual + inspiración. Primer touchpoint de la nueva retención.', impacto:'Base para Flujo 1 (334 Nuevos)', tiempo:'Semana 1-2'},
+  {prio:'media', titulo:'Apagar/reemplazar 01_VID_COL_NOV y 01_VID_COL_DIC', desc:'CPM 2,268 y 1,961. Concentran ARS 1.3M de spend. Probable fatiga de audience. Reemplazar con nuevo creative tipo Contenidos CORTO.', impacto:'Reduce CPM blended 15-20%', tiempo:'Semana 2'},
+  {prio:'media', titulo:'Lanzar Flujo 2 (Winback 222 Dormidos Recientes)', desc:'3 emails + Meta ad con producto complementario. Último email con 15% off válido 7 días.', impacto:'Rescatar 25-40 clientes antes de que se enfríen', tiempo:'Semana 2-3'},
+  {prio:'media', titulo:'Test segmento 18-24 con ARS 50K', desc:'CPM ARS 905 — 3.4x más barato que 35-44. Usar "Video / Contenidos CORTO". Validar si el CVR al menos iguala 40% del 25-34.', impacto:'Abre segmento nuevo a CAC eficiente', tiempo:'Semana 3-4'},
+  {prio:'media', titulo:'Solicitar export de Meta sin breakdown demográfico', desc:'Para medir ROAS, CTR y compras por creativo individualmente. Crítico para optimizar el creative en el próximo ciclo.', impacto:'Habilita decisiones por ad', tiempo:'Semana 1'},
+  {prio:'baja', titulo:'WhatsApp personal a los 13 Campeones', desc:'Mensaje de la creadora + acceso anticipado a próximo lanzamiento. LTV promedio de este segmento: ARS 282K.', impacto:'Costo cero · refuerza VIP', tiempo:'Semana 2'},
+  {prio:'baja', titulo:'Test A/B descuento: cupón vs sin cupón', desc:'El 39% de órdenes usa cupón (ARS 3.35M en descuentos). Medir si mueve CVR real o erosiona margen.', impacto:'Define política de cupones', tiempo:'Mes 1-2'}
+];
+document.getElementById('actions-list').innerHTML = ACTIONS.map((a,i) => `
+  <div class="card action" data-i="${i}">
+    <span class="prio ${a.prio}">${a.prio}</span>
+    <div class="body">
+      <h4>${a.titulo}</h4>
+      <div class="desc">${a.desc}</div>
+      <div class="impacto"><strong>Impacto:</strong> ${a.impacto} · <strong>Timing:</strong> ${a.tiempo}</div>
+    </div>
+    <button class="status" onclick="this.parentElement.classList.toggle('done'); this.textContent = this.parentElement.classList.contains('done') ? '✓ Hecho' : 'Marcar'">Marcar</button>
+  </div>`).join('');
+
+</script>
+</body>
+</html>
