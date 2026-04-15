@@ -264,6 +264,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:500
   <button class="tab-btn" data-tab="alertas">⚠️ Alertas</button>
   <button class="tab-btn" data-tab="oportunidades">💎 Oportunidades</button>
   <button class="tab-btn" data-tab="plan">✅ Plan de acción</button>
+  <button class="tab-btn" data-tab="roadmap">🗓️ Roadmap</button>
 </nav>
 
 <main class="content">
@@ -775,6 +776,57 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:500
   </div>
 </section>
 
+<!-- =========================== ROADMAP =========================== -->
+<section class="tab-panel" id="roadmap">
+  <div class="hero">
+    <div class="eyebrow">Roadmap · Abril → Diciembre 2026</div>
+    <h1>9 meses de cadencia: <span class="accent">budget, creativo y retención</span> contra el calendario energético</h1>
+    <div class="sub">El plan alinea inversión, producción de creatives y activación de retención con efemérides comerciales y energéticas que mueven a esta audiencia. Picos: Mayo (Hot Sale), Octubre (Día Madre + preventa), Noviembre (Cyber + Black + 11/11). Valle defensivo: Agosto.</div>
+  </div>
+
+  <div class="section">
+    <div class="card chart-card">
+      <h3>Curva de inversión sugerida</h3>
+      <div class="sub">Budget mensual blended siguiendo la curva histórica de ROAS · Total Abr-Dic ARS 4.48M</div>
+      <div class="chart-box"><canvas id="chart-roadmap-budget"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Plan mes a mes</div>
+        <div class="section-sub">Filtrá por trimestre o buscá por efeméride / acción · ordenable por header</div>
+      </div>
+    </div>
+    <div class="filters">
+      <input type="search" data-filter-for="#tbl-roadmap" placeholder="Buscar mes, efeméride, acción…">
+      <select data-filter-for="#tbl-roadmap" data-col="0">
+        <option value="">Todos los trimestres</option>
+        <option value="Q2">Q2 · Abr-Jun</option>
+        <option value="Q3">Q3 · Jul-Sep</option>
+        <option value="Q4">Q4 · Oct-Dic</option>
+      </select>
+    </div>
+    <div class="tbl-wrap"><div class="tbl-scroll">
+      <table id="tbl-roadmap" class="sortable">
+        <thead><tr>
+          <th>Mes</th>
+          <th>Foco</th>
+          <th>Efemérides</th>
+          <th>Performance</th>
+          <th>Creativo</th>
+          <th>Retención</th>
+          <th class="num">Budget</th>
+          <th class="num">ROAS target</th>
+        </tr></thead>
+        <tbody id="roadmap-body"></tbody>
+      </table>
+    </div></div>
+    <div class="note" style="margin-top:14px"><span style="color:var(--accent)">●</span> Comercial · <span style="color:var(--accent2)">✦</span> Energético / espiritual · El budget es blended (Meta + canal secundario si se activa). El ROAS target es referencia interna basada en el histórico — no compromiso al cliente.</div>
+  </div>
+</section>
+
 </main>
 
 <footer class="footer">
@@ -1088,7 +1140,125 @@ function enhanceTable(table){
   applyTable(table);
 }
 window.enhanceTable = enhanceTable;
-document.querySelectorAll('table.sortable').forEach(t => { if(t.id !== 'perf-table') enhanceTable(t); });
+
+/* =============== ROADMAP =============== */
+const ROADMAP = [
+  { mes:'Abril 2026', q:'Q2', intensity:'baja', foco:'Consolidar base + preparar Hot Sale',
+    efem:[['✦','Equinoccio otoño · cierre ciclo verano'],['✦','Luna llena 21/04']],
+    perf:['Sostener 02_VID_COL_DIC','Reactivar Imagen // UPC','Subir budget combos a 15%'],
+    creat:['Brief reunión creativa','3 variantes hook sobre colección'],
+    ret:['Subir custom audience 1,768 a Meta','Configurar Flujo 1 · email día 10'],
+    budget:250000, roas:'6.5x+' },
+  { mes:'Mayo 2026', q:'Q2', intensity:'alta', foco:'Hot Sale AR · pico Q2',
+    efem:[['●','Hot Sale AR · 3 días mediados de mayo'],['✦','Luna llena 20/05']],
+    perf:['Capa 1 frío con creative testeado','Retargeting agresivo Capa 2','Capa 3 retención con descuento exclusivo'],
+    creat:['Lanzar 2-3 ads nuevos de la reunión','Videos hook ritual + ahorro'],
+    ret:['Winback Flujo 2 activa 48h antes','WhatsApp a 13 Campeones con preventa'],
+    budget:450000, roas:'7-9x' },
+  { mes:'Junio 2026', q:'Q2', intensity:'media', foco:'Normalización post Hot Sale + Día Padre',
+    efem:[['●','Día del Padre · 3er domingo'],['✦','Solsticio invierno 21/06']],
+    perf:['Volver a budget base','Test segmento 18-24 ARS 50K','Pausar audiencias quemadas en Hot Sale'],
+    creat:['Producir 2 secuencias nuevas','UGC con Campeonas (Flujo 4)'],
+    ret:['Análisis post Hot Sale: nuevos vs recurrentes','Email solsticio · cierre ciclo'],
+    budget:320000, roas:'7-8x' },
+  { mes:'Julio 2026', q:'Q3', intensity:'media', foco:'Día del Amigo · combos protagonistas',
+    efem:[['●','Día del Amigo 20/07'],['✦','Luna llena']],
+    perf:['Push fuerte a secuencia_combos','Capa 1 con ángulo regalo','Cupón "amiga" controlado · A/B'],
+    creat:['Ad nuevo concepto regalo','Static + carrusel de combos'],
+    ret:['Reactivación Agenda Flujo 3 · preventa 2027','WhatsApp regalo a Dormidos Recientes'],
+    budget:380000, roas:'8x+' },
+  { mes:'Agosto 2026', q:'Q3', intensity:'baja', foco:'Valle defensivo · freno de budget',
+    efem:[['●','Día de la Niñez · 3er domingo']],
+    perf:['Bajar budget 60% (~ARS 250K)','Solo sostener top scalers','NO testear · NO escalar'],
+    creat:['Producción offline · grabar pool ads Q4','Reunión creativa Q4'],
+    ret:['Doble down email + WhatsApp','Flujo 2 winback agresivo'],
+    budget:250000, roas:'5-6x' },
+  { mes:'Septiembre 2026', q:'Q3', intensity:'media', foco:'Reactivación · primavera + estudiante',
+    efem:[['●','Día del Estudiante 21/09'],['✦','Equinoccio primavera 21/09 · alta carga energética']],
+    perf:['Volver a base ARS 380K','Lanzar 3-4 ads del pool Q4','Reabrir test 18-24 si validó'],
+    creat:['Brief preventa Agenda 2027','Videos rituales primavera'],
+    ret:['Activar Flujo 3 a 320 compradores Agenda 25','Email equinoccio'],
+    budget:380000, roas:'7-9x' },
+  { mes:'Octubre 2026', q:'Q4', intensity:'alta', foco:'Día Madre · preventa Navidad · arranque Q4',
+    efem:[['●','Día de la Madre · 3er domingo'],['●','Apertura preventa Agenda 2027'],['✦','Luna llena']],
+    perf:['Subir 1.6x base (~ARS 600K)','Lanzar preventa Agenda 27','Capa retención 15% del budget'],
+    creat:['3-5 ads frescos · ángulo regalo madre','Bundle ritual + agenda'],
+    ret:['Capa 3 Meta con custom audience completa','Email serie regalo madre'],
+    budget:600000, roas:'9-11x' },
+  { mes:'Noviembre 2026', q:'Q4', intensity:'pico', foco:'Cyber + Black Friday + 11/11 · pico anual',
+    efem:[['●','Black Friday'],['●','Cyber Monday'],['✦','Portal energético 11/11 · fecha clave esotérica']],
+    perf:['Pico de inversión ARS 1M+','Capa 3 retención prioritaria','Retargeting cart abandoners 24/7'],
+    creat:['Set 11/11 (energético) + set CM/BF (descuento)','Lanzar 4-6 ads frescos'],
+    ret:['Preventa exclusiva a Campeones 48h antes','WhatsApp masivo Día -1 a opt-in'],
+    budget:1000000, roas:'12-15x' },
+  { mes:'Diciembre 2026', q:'Q4', intensity:'pico', foco:'Navidad + Agenda 2027 · cierre de año',
+    efem:[['●','Navidad'],['●','Cierre preventa Agenda 27'],['✦','Solsticio verano 21/12 · cierre ciclo anual']],
+    perf:['Sostener inversión alta hasta 23/12','Capa retención agresiva','Cierre con target ARS 11M+ revenue'],
+    creat:['Ads de cierre de año + intención','Reels solsticio · regalo último momento'],
+    ret:['Email serie cierre ciclo + reflexión','Post-compra: pre-warm 2027'],
+    budget:850000, roas:'10-13x' }
+];
+
+function renderRoadmap(){
+  const intensityBg = { baja:'transparent', media:'transparent', alta:'rgba(212,180,131,.05)', pico:'rgba(182,149,212,.07)' };
+  const intensityBadge = { baja:['gris','VALLE'], media:['verde','BASE'], alta:['dorado','ALTO'], pico:['amatista','PICO ★'] };
+  document.getElementById('roadmap-body').innerHTML = ROADMAP.map((r,i) => {
+    const efem = r.efem.map(([icon,txt]) =>
+      `<div style="font-size:12px;line-height:1.5;margin-bottom:4px"><span style="color:${icon==='●'?'var(--accent)':'var(--accent2)'};margin-right:6px;font-weight:600">${icon}</span>${txt}</div>`
+    ).join('');
+    const list = arr => `<ul style="list-style:none;padding:0;margin:0;font-size:12px;color:var(--text-dim);line-height:1.5">${arr.map(x => `<li style="margin-bottom:5px;padding-left:10px;position:relative"><span style="position:absolute;left:0;color:var(--accent)">·</span>${x}</li>`).join('')}</ul>`;
+    const [bcls, blab] = intensityBadge[r.intensity];
+    return `<tr style="background:${intensityBg[r.intensity]}">
+      <td class="bold" data-sort="${i}" style="min-width:130px;vertical-align:top">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--text);line-height:1.1">${r.mes}</div>
+        <div style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.15em;margin-top:6px">${r.q}</div>
+      </td>
+      <td style="min-width:180px;vertical-align:top">
+        <div style="color:var(--text);font-weight:500;font-size:13px;margin-bottom:8px;line-height:1.4">${r.foco}</div>
+        <span class="badge ${bcls}">${blab}</span>
+      </td>
+      <td style="min-width:200px;vertical-align:top">${efem}</td>
+      <td style="vertical-align:top;min-width:200px">${list(r.perf)}</td>
+      <td style="vertical-align:top;min-width:200px">${list(r.creat)}</td>
+      <td style="vertical-align:top;min-width:200px">${list(r.ret)}</td>
+      <td class="num bold" data-sort="${r.budget}" style="white-space:nowrap;vertical-align:top;color:var(--text)">${arsK(r.budget)}</td>
+      <td class="num" data-sort="${parseFloat(r.roas)}" style="white-space:nowrap;vertical-align:top;color:var(--accent);font-weight:600">${r.roas}</td>
+    </tr>`;
+  }).join('');
+  const t = document.getElementById('tbl-roadmap');
+  if(window.enhanceTable) enhanceTable(t);
+}
+renderRoadmap();
+
+new Chart(document.getElementById('chart-roadmap-budget'), {
+  type:'bar',
+  data:{
+    labels: ROADMAP.map(r => r.mes.replace(' 2026','')),
+    datasets:[{
+      label:'Budget mensual',
+      data: ROADMAP.map(r => r.budget),
+      backgroundColor: ROADMAP.map(r =>
+        r.intensity==='pico' ? '#b695d4' :
+        r.intensity==='alta' ? '#d4b483' :
+        r.intensity==='media' ? '#7fb069' : '#4a3d5e'
+      ),
+      borderRadius:4
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{ callbacks:{ label:c => 'ARS ' + c.parsed.y.toLocaleString('es-AR') } }
+    },
+    scales:{
+      x:{ grid:gridCx },
+      y:{ grid:gridC, ticks:{ callback:v => 'ARS ' + (v/1000) + 'K' } }
+    }
+  }
+});
+
+document.querySelectorAll('table.sortable').forEach(t => { if(t.id !== 'perf-table' && t.id !== 'tbl-roadmap') enhanceTable(t); });
 // re-init perf-table now that enhanceTable exists (renderPerf already ran)
 { const p = document.getElementById('perf-table'); if(p) enhanceTable(p); }
 
