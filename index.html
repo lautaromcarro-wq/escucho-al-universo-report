@@ -107,6 +107,9 @@ th{text-align:left;padding:14px 16px;font-size:11px;font-weight:500;text-transfo
 th.sortable{cursor:pointer}
 th.sortable:hover{color:var(--text)}
 th .ind{display:inline-block;width:10px;color:var(--accent);font-size:10px;margin-left:4px}
+table.sortable th{cursor:pointer}
+table.sortable th[data-sort="asc"]::after{content:" ▲";color:var(--accent);font-size:9px;margin-left:4px}
+table.sortable th[data-sort="desc"]::after{content:" ▼";color:var(--accent);font-size:9px;margin-left:4px}
 td{padding:13px 16px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tbody tr{transition:background .15s}
@@ -361,8 +364,12 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:500
     <div class="count">Mostrando <strong id="mes-count">20</strong> de 20 meses</div>
   </div>
 
+  <div class="filters">
+    <input type="search" data-filter-for="#perf-table" placeholder="Buscar mes…">
+  </div>
+
   <div class="tbl-wrap"><div class="tbl-scroll">
-    <table id="perf-table">
+    <table id="perf-table" class="sortable">
       <thead><tr>
         <th>Mes</th>
         <th class="num">Spend Meta</th>
@@ -413,8 +420,17 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:500
         <div class="section-sub">Las secuencias y los contenidos cortos son el antídoto contra la inflación de CPM</div>
       </div>
     </div>
+    <div class="filters">
+      <input type="search" data-filter-for="#tbl-formatos" placeholder="Buscar formato…">
+      <select data-filter-for="#tbl-formatos" data-col="4">
+        <option value="">Todas las eficiencias</option>
+        <option value="ALTA">ALTA</option>
+        <option value="BUENA">BUENA</option>
+        <option value="MEDIA">MEDIA</option>
+      </select>
+    </div>
     <div class="tbl-wrap"><div class="tbl-scroll">
-      <table>
+      <table id="tbl-formatos" class="sortable">
         <thead><tr>
           <th>Formato</th>
           <th class="num">Inversión</th>
@@ -441,8 +457,19 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:500
         <div class="section-sub">Ranking por ROAS verificado con compras y valor de conversión a nivel ad · mínimo ARS 50K de spend histórico · fuente: exports Meta 2024/2025/2026 sin breakdown demográfico</div>
       </div>
     </div>
+    <div class="filters">
+      <input type="search" data-filter-for="#tbl-top-ads" placeholder="Buscar ad…">
+      <select data-filter-for="#tbl-top-ads" data-col="7">
+        <option value="">Todas las acciones</option>
+        <option value="Escalar">Escalar</option>
+        <option value="Sostener">Sostener</option>
+        <option value="Mantener">Mantener</option>
+        <option value="Reactivar">Reactivar</option>
+        <option value="Apagar">Apagar</option>
+      </select>
+    </div>
     <div class="tbl-wrap"><div class="tbl-scroll">
-      <table>
+      <table id="tbl-top-ads" class="sortable">
         <thead><tr>
           <th>#</th>
           <th>Ad</th>
@@ -505,8 +532,20 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:500
     <div class="sub">Coloreá, Diario Gratitud y UPC suman ARS 29.4M solos. Los combos tienen AOV de ARS 65K pero solo 16 unidades vendidas — la oportunidad más grande de la cuenta está ahí.</div>
   </div>
 
+  <div class="filters">
+    <input type="search" data-filter-for="#tbl-productos" placeholder="Buscar producto…">
+    <select data-filter-for="#tbl-productos" data-col="5">
+      <option value="">Todos los tipos</option>
+      <option value="Caballo batalla">Caballo batalla</option>
+      <option value="Gateway">Gateway</option>
+      <option value="Cross-sell">Cross-sell</option>
+      <option value="Renovación anual">Renovación anual</option>
+      <option value="Preventa">Preventa</option>
+      <option value="Combo">Combo</option>
+    </select>
+  </div>
   <div class="tbl-wrap"><div class="tbl-scroll">
-    <table>
+    <table id="tbl-productos" class="sortable">
       <thead><tr>
         <th>#</th>
         <th>Producto</th>
@@ -591,8 +630,11 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:500
         <div class="section-sub">Los caminos de segunda compra que ya existen en los datos · qué ofrecer a quién</div>
       </div>
     </div>
+    <div class="filters">
+      <input type="search" data-filter-for="#tbl-crossell" placeholder="Buscar producto o insight…">
+    </div>
     <div class="tbl-wrap"><div class="tbl-scroll">
-      <table>
+      <table id="tbl-crossell" class="sortable">
         <thead><tr>
           <th>Primera compra</th>
           <th>Segunda compra más frecuente</th>
@@ -801,16 +843,18 @@ function renderPerf(){
   body.innerHTML = filtered.map(m => {
     const roasColor = m.roas >= 10 ? 'var(--verde)' : (m.roas >= 7 ? 'var(--accent)' : 'var(--rojo)');
     return `<tr>
-      <td class="bold">${m.mes}${m.parcial ? ' <span style="color:var(--text-muted);font-size:11px">(parcial)</span>' : ''}</td>
-      <td class="num">${ars(m.spend)}</td>
-      <td class="num">${ars(m.rev)}</td>
-      <td class="num" style="color:${roasColor};font-weight:600">${roas(m.roas)}</td>
-      <td class="num">${m.ordenes}</td>
-      <td class="num">${ars(m.cac)}</td>
+      <td class="bold" data-sort="${m.y * 100 + (['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'].indexOf(m.mes.slice(0,3))+1)}">${m.mes}${m.parcial ? ' <span style="color:var(--text-muted);font-size:11px">(parcial)</span>' : ''}</td>
+      <td class="num" data-sort="${m.spend}">${ars(m.spend)}</td>
+      <td class="num" data-sort="${m.rev}">${ars(m.rev)}</td>
+      <td class="num" data-sort="${m.roas}" style="color:${roasColor};font-weight:600">${roas(m.roas)}</td>
+      <td class="num" data-sort="${m.ordenes}">${m.ordenes}</td>
+      <td class="num" data-sort="${m.cac}">${ars(m.cac)}</td>
       <td>${roasBadge(m.roas)}</td>
     </tr>`;
   }).join('') || '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-dim)">Sin resultados</td></tr>';
   document.getElementById('mes-count').textContent = filtered.length;
+  const t = document.getElementById('perf-table');
+  if (window.enhanceTable) enhanceTable(t);
 }
 document.getElementById('year-filter').addEventListener('change', renderPerf);
 document.getElementById('roas-filter').addEventListener('change', renderPerf);
@@ -969,6 +1013,85 @@ const ACTIONS = [
   {prio:'baja', titulo:'WhatsApp personal a los 13 Campeones', desc:'Mensaje de la creadora + acceso anticipado a próximo lanzamiento. LTV promedio de este segmento: ARS 282K.', impacto:'Costo cero · refuerza VIP', tiempo:'Semana 2'},
   {prio:'baja', titulo:'Test A/B descuento: cupón vs sin cupón', desc:'El 39% de órdenes usa cupón (ARS 3.35M en descuentos). Medir si mueve CVR real o erosiona margen.', impacto:'Define política de cupones', tiempo:'Mes 1-2'}
 ];
+/* =============== SORTABLE + FILTERABLE TABLES =============== */
+function debounce(fn, ms){ let t; return (...a) => { clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
+
+function getCellVal(tr, i){
+  const cell = tr.cells[i];
+  if(cell.dataset.sort !== undefined){
+    const v = parseFloat(cell.dataset.sort);
+    if(!isNaN(v)) return v;
+  }
+  const txt = cell.textContent.trim();
+  const cleaned = txt.replace(/[^\d.,-]/g, '').replace(/,/g, '');
+  const n = parseFloat(cleaned);
+  return isNaN(n) ? txt.toLowerCase() : n;
+}
+
+function applyTable(table){
+  const state = table._state;
+  let rows = table._original.slice();
+  if(state.col !== null){
+    rows.sort((a,b) => {
+      const va = getCellVal(a, state.col), vb = getCellVal(b, state.col);
+      if(va < vb) return -1 * state.dir;
+      if(va > vb) return  1 * state.dir;
+      return 0;
+    });
+  }
+  const sel = '#' + table.id;
+  const filterInput = document.querySelector(`input[data-filter-for="${sel}"]`);
+  if(filterInput && filterInput.value.trim()){
+    const q = filterInput.value.toLowerCase().trim();
+    rows = rows.filter(tr => tr.textContent.toLowerCase().includes(q));
+  }
+  document.querySelectorAll(`select[data-filter-for="${sel}"]`).forEach(s => {
+    if(s.value){
+      const col = parseInt(s.dataset.col, 10);
+      rows = rows.filter(tr => tr.cells[col] && tr.cells[col].textContent.includes(s.value));
+    }
+  });
+  Array.from(table.tHead.rows[0].cells).forEach((th,i) => {
+    th.dataset.sort = (i === state.col) ? (state.dir === 1 ? 'asc' : 'desc') : '';
+  });
+  const tb = table.tBodies[0];
+  tb.innerHTML = '';
+  rows.forEach(tr => tb.appendChild(tr));
+  if(rows.length === 0){
+    const cols = table.tHead.rows[0].cells.length;
+    tb.innerHTML = `<tr><td colspan="${cols}" style="text-align:center;padding:32px;color:var(--text-dim)">Sin resultados</td></tr>`;
+  }
+}
+
+function enhanceTable(table){
+  table._original = Array.from(table.tBodies[0].rows).filter(tr => tr.cells.length > 1 || !tr.cells[0].hasAttribute('colspan'));
+  table._state = table._state || { col: null, dir: 0 };
+  if(!table._bound){
+    table._bound = true;
+    Array.from(table.tHead.rows[0].cells).forEach((th, i) => {
+      th.addEventListener('click', () => {
+        const s = table._state;
+        if(s.col !== i){ s.col = i; s.dir = 1; }
+        else if(s.dir === 1){ s.dir = -1; }
+        else { s.col = null; s.dir = 0; }
+        applyTable(table);
+      });
+    });
+    const sel = '#' + table.id;
+    document.querySelectorAll(`input[data-filter-for="${sel}"]`).forEach(el => {
+      el.addEventListener('input', debounce(() => applyTable(table), 150));
+    });
+    document.querySelectorAll(`select[data-filter-for="${sel}"]`).forEach(el => {
+      el.addEventListener('change', () => applyTable(table));
+    });
+  }
+  applyTable(table);
+}
+window.enhanceTable = enhanceTable;
+document.querySelectorAll('table.sortable').forEach(t => { if(t.id !== 'perf-table') enhanceTable(t); });
+// re-init perf-table now that enhanceTable exists (renderPerf already ran)
+{ const p = document.getElementById('perf-table'); if(p) enhanceTable(p); }
+
 document.getElementById('actions-list').innerHTML = ACTIONS.map((a,i) => `
   <div class="card action" data-i="${i}">
     <span class="prio ${a.prio}">${a.prio}</span>
